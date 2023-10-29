@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- github.com/hafa39/catalog-service-v3/k8s?ref=main
+
+#patchesStrategicMerge:
+#  - patch-env.yml
+#  - patch-resources.yml
+#  - patch-volumes.yml
+
+patches:
+- path: patch-env.yml
+- path: patch-resources.yml
+- path: patch-volumes.yml
+
+configMapGenerator:
+- behavior: merge
+  files:
+  - application-prod.yml
+  name: catalog-config
+
+images:
+- name: catalog-service
+  newName: ghcr.io/hafa39/catalog-service-v3
+  newTag: 39de4ec36c2315b00879aefb4fa70a5028a14d53
+
+replicas:
+- count: 2
+  name: catalog-service
